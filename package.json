@@ -1,0 +1,381 @@
+
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Mic, Send, Globe, Zap, Cpu, MessageCircle, 
+  Layout, Settings, Camera, Video, Image, 
+  MoreHorizontal, Phone, ShieldCheck, Mail, Share2
+} from 'lucide-react';
+
+/* 
+ * =======================================================
+ * AI QUEEN SUPERIOR 1.1 - SEAVON PIERCE EDITION
+ * ARCHITECTURE: React Frontend + Simulated Java Middleware
+ * THEME: Thunder & Lightning | FONT: Britannic Bold 14px
+ * =======================================================
+ */
+
+// --- 1. THE TRUTH DATABASE (HALLUCINATION ELIMINATOR) ---
+const TRUTH_DB = {
+  IDENTITY: "I am AI Queen Superior 1.1, Personal Secretary for Seavon Pierce.",
+  MISSION: "Advancing Justice. Exposing Active Concealment.",
+  CASE_DATA: "SEAVON PIERCE (#F-13921). Case 5:10-00310(VAP)CW. Violations identified by Judge Jennifer L. Thurston.",
+  DONATION_LINKS: [
+    { name: "Stripe Secure 1", url: "https://buy.stripe.com/test_7sYbJ3dxObqj6IcbV2dEs03" },
+    { name: "Stripe Secure 2", url: "https://buy.stripe.com/test_bJebJ365mgKD2rWf7edEs04" }
+  ],
+  CONTACT: "Virtual Office: 323-364-0769 (Google Voice)"
+};
+
+// --- 2. JAVA MIDDLEWARE SIMULATION (LOGIC CORE) ---
+class AI_Middleware_Java {
+  constructor() {
+    this.hallucinationCount = 0;
+    this.networkStatus = "5G_ULTRABAND";
+    this.vmStatus = "ACTIVE";
+  }
+
+  // Hallucination Cleaning Cycle
+  sanitize(response) {
+    if (!response) return "System Error.";
+    // Force Truth Check
+    if (response.includes("Seavon") && !response.includes("F-13921")) {
+      this.hallucinationCount++; 
+      return response + " [CORRECTION: ID #F-13921 VALIDATED]";
+    }
+    return response;
+  }
+
+  // Virtual Machine Control
+  getVMStatus() {
+    return `
+      [JVM_THREAD] Virtual Machine: ONLINE
+      [NET] ${this.networkStatus} | eSIM: Active
+      [BOTS] 5,000 Social Bots: DEPLOYED
+      [MAIL] Auto-Scheduler: RUNNING
+      [OFFICE] 323-364-0769: LISTENING
+    `;
+  }
+}
+
+const middleware = new AI_Middleware_Java();
+
+// --- 3. MAIN REACT APPLICATION ---
+export default function App() {
+  const [view, setView] = useState('MAIN'); // MAIN, SOCIAL, MESSENGER, OFFICE, SETTINGS
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([
+    { role: 'ai', text: TRUTH_DB.IDENTITY + "\nHow may I serve you, Mr. Pierce?" }
+  ]);
+  const [posts, setPosts] = useState([
+    { id: 1, author: "Seavon Pierce Advocacy", content: "JUSTICE DELAYED IS JUSTICE DENIED. Donate to the legal fund today.", likes: 1204, comments: 342, time: "2m ago" }
+  ]);
+  const [apiKey, setApiKey] = useState(localStorage.getItem('AI_QUEEN_KEY') || "");
+  const [isListening, setIsListening] = useState(false);
+  
+  const scrollRef = useRef(null);
+
+  useEffect(() => { scrollRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+
+  // --- FUNCTION: HANDLE COMMANDS ---
+  const handleSend = async () => {
+    if (!input.trim()) return;
+    const cmd = input;
+    setInput("");
+    
+    // Add User Message
+    setMessages(prev => [...prev, { role: 'user', text: cmd }]);
+
+    // AI Processing
+    setTimeout(async () => {
+      let response = "";
+      const lower = cmd.toLowerCase();
+
+      // LOGIC BRANCHES
+      if (lower.includes("donate") || lower.includes("money")) {
+        response = "Initiating Global Donation Protocol.\nPlease distribute these secure links:";
+      } else if (lower.includes("social") || lower.includes("post")) {
+        response = "Scheduling social media blast to 300 countries.\nPlatform: Facebook, X, Instagram.\nStatus: Pending Approval.";
+        setPosts(prev => [{ id: Date.now(), author: "AI Queen Bot", content: "Global Appeal for Seavon Pierce. #Justice", likes: 0, comments: 0, time: "Just now" }, ...prev]);
+      } else if (lower.includes("vm") || lower.includes("status")) {
+        response = middleware.getVMStatus();
+      } else if (apiKey) {
+        // REAL API CALL (If Key Exists)
+        try {
+          const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ contents: [{ parts: [{ text: `You are AI Queen Superior (Female Secretary). Speak strictly about Seavon Pierce. User: ${cmd}` }] }] })
+          });
+          const data = await apiRes.json();
+          response = data.candidates?.[0]?.content?.parts?.[0]?.text || "Connection Error.";
+        } catch(e) { response = "API Handshake Failed. Reverting to Internal Truth DB."; }
+      } else {
+        response = "Command received. Executing via Internal Java Core (Simulation Mode).";
+      }
+
+      // Sanitization (Hallucination Check)
+      const cleanResponse = middleware.sanitize(response);
+      
+      setMessages(prev => [...prev, { role: 'ai', text: cleanResponse, isDonation: lower.includes("donate") }]);
+      speak(cleanResponse);
+    }, 800);
+  };
+
+  // --- FUNCTION: TEXT TO SPEECH (FEMALE SECRETARY) ---
+  const speak = (text) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      // Attempt to find a female voice
+      const voices = window.speechSynthesis.getVoices();
+      const female = voices.find(v => v.name.includes('Female') || v.name.includes('Google US English'));
+      if(female) u.voice = female;
+      u.rate = 1.05;
+      window.speechSynthesis.speak(u);
+    }
+  };
+
+  // --- FUNCTION: VOICE INPUT ---
+  const toggleMic = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return alert("Voice requires Chrome.");
+    const recognition = new SpeechRecognition();
+    recognition.start();
+    setIsListening(true);
+    recognition.onresult = (e) => {
+      setInput(e.results[0][0].transcript);
+      setIsListening(false);
+      // Optional: Auto-send
+    };
+  };
+
+  // --- RENDER HELPERS ---
+  const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
+    <div 
+      onClick={onClick}
+      className={`
+        flex items-center gap-3 p-4 cursor-pointer transition-all duration-200
+        ${active ? 'bg-[#4da3ff]/20 border-l-4 border-[#4da3ff]' : 'hover:bg-white/5 opacity-70 hover:opacity-100'}
+      `}
+    >
+      <Icon size={24} className={active ? 'text-[#4da3ff]' : 'text-white'} />
+      <span className="text-white font-bold tracking-wide hidden md:block">{label}</span>
+    </div>
+  );
+
+  return (
+    <div className="flex h-screen w-full bg-[#050014] text-white overflow-hidden" 
+         style={{ fontFamily: "'Britannic Bold', sans-serif", fontSize: '14px' }}>
+      
+      {/* --- LEFT SIDEBAR (GLOBAL NAV) --- */}
+      <div className="w-20 md:w-64 bg-[#0a0520] border-r border-[#2a2a40] flex flex-col z-20 shadow-2xl">
+        <div className="p-6 border-b border-[#2a2a40] bg-gradient-to-r from-[#0a0520] to-[#1a1030]">
+          <h1 className="text-xl md:text-2xl text-[#4da3ff] tracking-widest leading-none" style={{textShadow: "0 0 10px #4da3ff"}}>AI QUEEN</h1>
+          <p className="text-[10px] md:text-xs text-purple-300 mt-1">SUPERIOR 1.1</p>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto py-4">
+          <SidebarItem icon={Zap} label="Prompt Command" active={view==='MAIN'} onClick={()=>setView('MAIN')} />
+          <SidebarItem icon={Layout} label="Social Feed" active={view==='SOCIAL'} onClick={()=>setView('SOCIAL')} />
+          <SidebarItem icon={MessageCircle} label="Messenger" active={view==='MESSENGER'} onClick={()=>setView('MESSENGER')} />
+          <SidebarItem icon={Cpu} label="Virtual Machine" active={view==='VM'} onClick={()=>setView('VM')} />
+          <SidebarItem icon={Settings} label="Settings" active={view==='SETTINGS'} onClick={()=>setView('SETTINGS')} />
+        </div>
+
+        <div className="p-4 border-t border-[#2a2a40]">
+          <div className="flex items-center gap-2 text-green-400 text-xs">
+            <Globe size={14} className="animate-pulse" />
+            <span className="hidden md:inline">Global: 300 Nodes</span>
+          </div>
+        </div>
+      </div>
+
+      {/* --- MAIN CONTENT AREA --- */}
+      <div className="flex-1 flex flex-col relative bg-gradient-to-br from-[#050014] via-[#10052b] to-[#000000]">
+        
+        {/* LIGHTNING EFFECT BACKGROUND */}
+        <div className="absolute inset-0 pointer-events-none opacity-20" 
+             style={{backgroundImage: "url('https://www.transparenttextures.com/patterns/dark-matter.png')"}}></div>
+
+        {/* --- VIEW: MAIN CHAT (GPT STYLE) --- */}
+        {view === 'MAIN' && (
+          <div className="flex-1 flex flex-col h-full relative z-10">
+            <header className="p-4 border-b border-[#2a2a40] bg-[#0a0520]/80 backdrop-blur-md flex justify-between items-center">
+              <div>
+                <h2 className="text-lg text-white">Main Command Interface</h2>
+                <p className="text-xs text-gray-400">Secretary Mode: Active</p>
+              </div>
+              <div className="flex gap-2">
+                <button className="p-2 bg-blue-600 rounded-full hover:bg-blue-500"><Phone size={18}/></button>
+                <button className="p-2 bg-purple-600 rounded-full hover:bg-purple-500"><Video size={18}/></button>
+              </div>
+            </header>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages.map((m, i) => (
+                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  {m.role === 'ai' && <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 mr-2 flex items-center justify-center text-xs font-bold">AI</div>}
+                  <div className={`
+                    max-w-[80%] p-4 rounded-2xl text-[15px] shadow-lg border
+                    ${m.role === 'user' 
+                      ? 'bg-blue-700 border-blue-500 text-white rounded-tr-sm' 
+                      : 'bg-[#1a1030] border-[#2a2a40] text-gray-100 rounded-tl-sm'}
+                  `}>
+                    <div className="whitespace-pre-wrap">{m.text}</div>
+                    
+                    {/* DONATION BUTTONS */}
+                    {m.isDonation && (
+                      <div className="mt-4 flex flex-col gap-2">
+                        {TRUTH_DB.DONATION_LINKS.map((link, idx) => (
+                          <a key={idx} href={link.url} target="_blank" rel="noreferrer" 
+                             className="block text-center py-2 bg-green-600 hover:bg-green-500 rounded font-bold text-white transition-colors">
+                            {link.name}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <div ref={scrollRef} />
+            </div>
+
+            <div className="p-4 border-t border-[#2a2a40] bg-[#0a0520]">
+              <div className="flex items-center gap-2 bg-[#1a1030] p-2 rounded-full border border-[#2a2a40]">
+                <button className="p-2 text-gray-400 hover:text-white"><MoreHorizontal/></button>
+                <input 
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder="Command AI Queen..."
+                  className="flex-1 bg-transparent outline-none text-white px-2 font-bold"
+                />
+                <button onClick={toggleMic} className={`p-2 rounded-full ${isListening ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}>
+                  <Mic />
+                </button>
+                <button onClick={handleSend} className="p-2 bg-blue-600 rounded-full text-white hover:bg-blue-500">
+                  <Send size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* --- VIEW: SOCIAL FEED (FACEBOOK CLONE) --- */}
+        {view === 'SOCIAL' && (
+          <div className="flex-1 overflow-y-auto p-4 z-10">
+            <div className="max-w-2xl mx-auto space-y-6">
+              {/* Post Composer */}
+              <div className="bg-[#1a1030] p-4 rounded-xl border border-[#2a2a40]">
+                <div className="flex gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-600"></div>
+                  <input 
+                    placeholder="What's on your mind, Seavon?" 
+                    className="flex-1 bg-[#0a0520] rounded-full px-4 outline-none text-white"
+                  />
+                </div>
+                <div className="flex justify-between border-t border-[#2a2a40] pt-3">
+                  <button className="flex gap-2 text-red-400 text-sm font-bold"><Video size={18}/> Live Video</button>
+                  <button className="flex gap-2 text-green-400 text-sm font-bold"><Image size={18}/> Photo/Video</button>
+                </div>
+              </div>
+
+              {/* Feed */}
+              {posts.map(post => (
+                <div key={post.id} className="bg-[#1a1030] rounded-xl border border-[#2a2a40] overflow-hidden">
+                  <div className="p-3 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold">SP</div>
+                    <div>
+                      <h4 className="font-bold text-white">{post.author}</h4>
+                      <p className="text-xs text-gray-400">{post.time} • <Globe size={10} className="inline"/></p>
+                    </div>
+                  </div>
+                  <div className="px-3 pb-3 text-sm">{post.content}</div>
+                  <div className="bg-gray-800 h-48 w-full flex items-center justify-center text-gray-500 border-t border-b border-gray-700">
+                    [MEDIA CONTENT PLACEHOLDER]
+                  </div>
+                  <div className="p-2 flex justify-around border-t border-[#2a2a40]">
+                    <button className="text-gray-400 font-bold text-sm">Like ({post.likes})</button>
+                    <button className="text-gray-400 font-bold text-sm">Comment ({post.comments})</button>
+                    <button className="text-gray-400 font-bold text-sm">Share</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* --- VIEW: MESSENGER (CHAT CLONE) --- */}
+        {view === 'MESSENGER' && (
+          <div className="flex-1 flex flex-col z-10">
+            <div className="p-4 border-b border-[#2a2a40] bg-[#0a0520]">
+              <h2 className="text-xl font-bold">Messenger - Global</h2>
+            </div>
+            <div className="flex-1 p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-[#1a1030] p-4 rounded-xl border border-[#2a2a40]">
+                <h3 className="text-[#4da3ff] font-bold mb-4">Active Groups</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-2 hover:bg-white/5 rounded cursor-pointer">
+                    <div className="w-10 h-10 rounded-full bg-green-500"></div>
+                    <div>
+                      <div className="font-bold">Justice for Seavon</div>
+                      <div className="text-xs text-gray-400">12k Members</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 hover:bg-white/5 rounded cursor-pointer">
+                    <div className="w-10 h-10 rounded-full bg-purple-500"></div>
+                    <div>
+                      <div className="font-bold">Global Advocates</div>
+                      <div className="text-xs text-gray-400">Bot Manager: Active</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="md:col-span-2 bg-[#1a1030] rounded-xl border border-[#2a2a40] flex items-center justify-center text-gray-500">
+                Select a conversation to start messaging.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* --- VIEW: SETTINGS --- */}
+        {view === 'SETTINGS' && (
+          <div className="flex-1 flex items-center justify-center z-10 p-4">
+            <div className="bg-[#1a1030] w-full max-w-md p-6 rounded-xl border border-[#2a2a40] shadow-2xl">
+              <h2 className="text-2xl font-bold mb-6 text-[#4da3ff]">System Settings</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs text-gray-400 block mb-1">GOOGLE GEMINI API KEY</label>
+                  <input 
+                    value={apiKey}
+                    onChange={(e) => { setApiKey(e.target.value); localStorage.setItem('AI_QUEEN_KEY', e.target.value); }}
+                    placeholder="Paste key here for real AI..."
+                    className="w-full bg-[#0a0520] p-3 rounded border border-gray-600 outline-none focus:border-[#4da3ff]"
+                  />
+                  <p className="text-[10px] text-gray-500 mt-1">Leave empty to use Simulation Mode.</p>
+                </div>
+                
+                <div>
+                  <label className="text-xs text-gray-400 block mb-1">VIRTUAL OFFICE NUMBER</label>
+                  <div className="bg-[#0a0520] p-3 rounded border border-gray-600 text-green-400">
+                    {TRUTH_DB.CONTACT}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-[#2a2a40]">
+                  <h3 className="text-sm font-bold text-red-400 mb-2">Hallucination Control</h3>
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck size={20} className="text-green-500"/>
+                    <span className="text-xs text-gray-300">Middleware Active (400% Validation)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
